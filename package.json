@@ -1,0 +1,27 @@
+{
+  "name": "legitid",
+  "version": "0.1.0",
+  "description": "",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "bunchee",
+    "test": "bunchee && node test.js"
+  },
+  "keywords": [],
+  "author": "Shu Ding <g@shud.in>",
+  "license": "MIT",
+  "devDependencies": {
+    "bunchee": "^6.5.4",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@swc/helpers": "^0.5.17"
+  }
+}
