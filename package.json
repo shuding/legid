@@ -4,7 +4,6 @@
   "description": "A library for generating safe, legit and random URL-safe IDs",
   "type": "module",
   "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
@@ -27,7 +26,5 @@
     "bunchee": "^6.5.4",
     "typescript": "^5.8.3"
   },
-  "dependencies": {
-    "@swc/helpers": "^0.5.17"
-  }
+  "packageManager": "pnpm@9.15.9"
 }
