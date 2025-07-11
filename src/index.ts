@@ -1,18 +1,22 @@
-const SALT = 'legitid:' // Change this to your desired salt
-const DEFAULT_ID_LENGTH = 10 // Configurable ID length
+// Default salt prefix for ID generation
+const SALT = 'legid:'
 
-// Configuration
+// Default length for generated IDs if not specified
+const DEFAULT_ID_LENGTH = 10
+
+// Custom alphabet for ID generation
 const ALPHABET =
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
 
 // Calculate the conversion ratio from hex to base62
-const HEX_TO_ALPHABET_RATIO = 1.48855 // Math.log(62)/Math.log(16)
+// Math.log(62) / Math.log(16) ~= 1.48855
+const HEX_TO_ALPHABET_RATIO = 1.48855
 
-// sha1 is 160 bits, which is 40 hex characters. So the max length of the hex
+// SHA-1 is 160 bits, which is 40 hex characters. So the max length of the hex
 // ID is 80 characters (40 from token, 40 from hash).
-// 80 / 1.48855 = 54, so we can use a max of 54 characters in the custom
-// alphabet.
-const MAX_ID_LENGTH = 54 // Maximum length for custom alphabet IDs
+// 80 / 1.48855 = 54
+// Maximum length for custom alphabet IDs
+const MAX_ID_LENGTH = 54
 
 /**
  * Calculate required hex length for desired alphabet length
@@ -105,8 +109,8 @@ async function sha1(text: string): Promise<string> {
 }
 
 /**
- * Function A: Creates a random ID
- * ID structure: chars at odd positions are from token, chars at even positions are from value
+ * Creates a random ID
+ * ID structure: chars at odd positions are from token, chars at even positions are from hash
  * Uses hex internally, converts to custom alphabet at the end
  */
 export async function createId({
@@ -144,10 +148,13 @@ export async function createId({
 }
 
 /**
- * Function B: Verifies if an ID was created from the createRandomId process
+ * Verifies if an ID was created from the createId process
  * Converts from custom alphabet back to hex, then verifies
  */
-export async function verifyId(id: string, { salt = SALT }): Promise<boolean> {
+export async function verifyId(
+  id: string,
+  { salt = SALT } = {}
+): Promise<boolean> {
   if (!id || id.length > MAX_ID_LENGTH) {
     return false // Invalid ID length
   }
