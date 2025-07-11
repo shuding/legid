@@ -1,6 +1,6 @@
 # legid
 
-A library for generating __safe__, __legit__ and __random__ URL-safe IDs.
+A library for generating __safe__, __legit__ and __random__ URL-compat IDs.
 
 ## Why use legid?
 
