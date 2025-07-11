@@ -67,6 +67,8 @@ Create a random ID string:
 import { createId } from 'legid'
 
 const id = await createId()
+
+// Example: 'e3N4BRJW2d'
 ```
 
 Specify the custom ID length (approximate) and hash salt (see below) if needed:
@@ -78,6 +80,8 @@ const id = await createId({
   approximateLength: 20,  // Custom length, default is 10
   salt: 'my-custom-salt', // Custom salt, default is 'legid:'
 })
+
+// Example: 'gnzJb1TCJobhuG4PrIZz'
 ```
 
 It’s safe to expose the salt on the client side, as it is not a secret. Make
