@@ -110,13 +110,12 @@ const isValid = await verifyId(id, {
 
 The generated ID consists of a random data buffer with its SHA-1 hash. These 2 parts
 are mixed together at odd and even positions, respectively, and then converted to a custom
-alphabet (A-Z, a-z, 0-9). All SHA-1 hashes are salted with a prefix to prevent rainbow table attacks.
+alphabet (A-Z, a-z, 0-9). The SHA-1 hash is salted with a prefix to prevent rainbow table attacks.
 
 The reversed process is used to verify the ID.
 
 This means that if a malicious user tries to generate an ID with a specific value,
-let’s say `"admin"`, they need to ensure that `SHA1(salt + "di")` starts with `"amn"` so the mixed ID would be `"admin"`. This is very unlikely to happen, at least not with a
-reasonable amount of effort.
+let’s say `"admin"`, conceptually they need to ensure that `SHA1(salt + "di")` starts with `"amn"` so the mixed ID would be `"admin"`. This is very unlikely to happen, at least not with a reasonable amount of effort.
 
 ## Note
 
