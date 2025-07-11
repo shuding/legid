@@ -27,7 +27,7 @@ main problem with these approaches is __client-side manipulation and man-in-the-
 attacks__.
 
 For example, if a malicious user overrides the client `generateId` implementation
-via browser developer tools to return an ID of their choice, such as `admin`, the server
+via browser developer tools to return an ID of their choice, such as `"admin"`, the server
 would accept it without any verification. And suddenly, the user successfully created a tweet
 with the special URL `/tweet/admin`, which is not what we want to happen.
 
@@ -37,6 +37,7 @@ both an ID and a verification token/nonce. But we want to avoid:
 - Extra network request before knowing the ID
 - Storing pre-generated IDs on the server
 - Sending one-off tokens or nonces between client and server
+- Using a wordlist on the server to filter out not-allowed IDs
 
 __Legid__ is here to solve this problem.
 
@@ -114,8 +115,7 @@ alphabet (A-Z, a-z, 0-9). All SHA-1 hashes are salted with a prefix to prevent r
 The reversed process is used to verify the ID.
 
 This means that if a malicious user tries to generate an ID with a specific value,
-let’s say `admin`, they need to ensure that `SHA1(salt + "di")` starts with `amn` so the
-mixed ID would be `admin`. This is very unlikely to happen, at least not with a
+let’s say `"admin"`, they need to ensure that `SHA1(salt + "di")` starts with `"amn"` so the mixed ID would be `"admin"`. This is very unlikely to happen, at least not with a
 reasonable amount of effort.
 
 ## Note
