@@ -2,7 +2,9 @@
 
 A library for generating __safe__, __legit__ and __random__ URL-compat IDs.
 
-## Why use legid?
+Unlike other random ID libs, Legid is to solve the __client-side manipulation__ problem. Read the example below.
+
+## Why use Legid?
 
 In a modern web application, you often need to generate short and unique IDs
 __on the client side__:
@@ -127,7 +129,9 @@ let’s say `"admin"`, conceptually they need to ensure that `SHA1(salt + "di")`
 to manipulate the ID with lowest effort. It is not intended for use in
 cryptographic applications or where high security is required.
 
-Collisions are still possible.
+Collisions are still possible. The format Legid uses will decrease the possible generation space. For a given length L, there will be approximately 62^(L/2) IDs available. __You should always check collision and ID length on the server side before proceeding.__
+
+Possible adjustments can be made to this lib by changing RHRHRH (R for random data position, H for hash positions) to other representations like HRRHRR to reduce the collision rate with a compromise of security.
 
 ## Author
 
