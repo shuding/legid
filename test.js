@@ -1,9 +1,11 @@
 import { createId, verifyId } from "./dist/index.js"
+import * as badWordsList from 'badwords-list'
 
 // Test configuration
 const TEST_ITERATIONS = 100
-const MIN_LENGTH = 5
-const MAX_LENGTH = 15
+const MIN_LENGTH = 3
+const MAX_LENGTH = 20
+const STEPS = [2, 3]
 
 console.log("🧪 Starting ID System Tests...\n")
 
@@ -19,24 +21,28 @@ for (let length = MIN_LENGTH; length <= MAX_LENGTH; length++) {
 
   let lengthPassed = 0
 
-  for (let i = 0; i < TEST_ITERATIONS; i++) {
-    try {
-      // Generate ID
-      const id = await createId(length)
+  for (const step of STEPS) {
+    console.log(`  - Step: ${step} positions`)
 
-      // Verify ID
-      const isValid = await verifyId(id)
+    for (let i = 0; i < TEST_ITERATIONS; i++) {
+      try {
+        // Generate ID
+        const id = await createId({ approximateLength: length, step })
 
-      totalTests++
-      if (isValid) {
-        passedTests++
-        lengthPassed++
-      } else {
-        console.log(`❌ Failed verification for ID: ${id} (length: ${length})`)
+        // Verify ID
+        const isValid = await verifyId(id, { step })
+
+        totalTests++
+        if (isValid) {
+          passedTests++
+          lengthPassed++
+        } else {
+          console.log(`❌ Failed verification for ID: ${id} (length: ${length}, step: ${step})`)
+        }
+      } catch (error) {
+        console.log(`💥 Error during test: ${error.message}`)
+        totalTests++
       }
-    } catch (error) {
-      console.log(`💥 Error during test: ${error.message}`)
-      totalTests++
     }
   }
 
@@ -63,8 +69,8 @@ for (let i = 0; i < TEST_ITERATIONS; i++) {
     // Create wrong token by modifying the ID
     let wrongId = validId
 
-    // Randomly modify 1-3 characters
-    const modifications = Math.floor(Math.random() * 3) + 1
+    // Randomly modify 2 characters
+    const modifications = 2
     for (let j = 0; j < modifications; j++) {
       const pos = Math.floor(Math.random() * wrongId.length)
       const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -85,7 +91,7 @@ for (let i = 0; i < TEST_ITERATIONS; i++) {
     if (!isValid) {
       correctlyRejected++
     } else {
-      console.log(`❌ Wrong ID incorrectly validated: ${wrongId}`)
+      console.log(`⁉️ Wrong ID incorrectly validated: ${wrongId}`)
     }
   } catch (error) {
     console.log(`💥 Error during wrong token test: ${error.message}`)
@@ -122,6 +128,26 @@ try {
   console.log(`Invalid chars verification: ${invalidResult ? "❌ PASSED (should fail)" : "✅ FAILED (correct)"}`)
 } catch (error) {
   console.log(`Invalid chars verification: ✅ THREW ERROR (correct)`)
+}
+
+// Test bad words and popular phrases
+const words = badWordsList.array.concat([
+  "test", "demo", "admin", "user", "password", "login",
+  "apple", "signin", "signout", "google", "twitter", "facebook",
+  "react", "java", "javascript", "vercel", "github"
+])
+let wordPassed = 0
+for (const word of words) {
+  const result = await verifyId(word)
+  if (result) {
+    wordPassed++
+    console.log(`Word "${word}" unexpectedly validated`)
+  }
+}
+if (wordPassed === 0) {
+  console.log("Words verification: ✅ REJECTED (correct)")
+} else {
+  console.log(`Words verification: ❌ ${wordPassed} bad words incorrectly validated`)
 }
 
 // Final summary

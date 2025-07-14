@@ -23,6 +23,7 @@
   "author": "Shu Ding <g@shud.in>",
   "license": "MIT",
   "devDependencies": {
+    "badwords-list": "2.0.1-4",
     "bunchee": "^6.5.4",
     "typescript": "^5.8.3"
   },

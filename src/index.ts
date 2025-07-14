@@ -116,6 +116,7 @@ async function sha1(text: string): Promise<string> {
 export async function createId({
   approximateLength = DEFAULT_ID_LENGTH,
   salt = SALT,
+  step = 2,
 } = {}): Promise<string> {
   if (approximateLength <= 0) {
     throw new Error('ID length must be a positive integer')
@@ -123,12 +124,23 @@ export async function createId({
   if (approximateLength > MAX_ID_LENGTH) {
     throw new Error(`ID length exceeds maximum of ${MAX_ID_LENGTH} characters`)
   }
+  if (step <= 1) {
+    throw new Error('Step must be at least 2')
+  }
 
   // Calculate required hex length for the desired alphabet ID length
   let hexLength = calculateHexLength(approximateLength)
 
+  if (step > hexLength - 1) {
+    throw new Error(
+      'Step cannot be greater than the data length: ' + (hexLength - 1)
+    )
+  }
+
   // Generate random token
-  const hexToken = generateRandomHexToken((hexLength + 1) >> 1)
+  const hexToken = generateRandomHexToken(
+    Math.ceil((hexLength * (step - 1)) / step)
+  )
 
   // Calculate hash
   const hexHash = await sha1(salt + hexToken)
@@ -136,11 +148,13 @@ export async function createId({
   // Create hex ID
   let hexId = ''
 
+  let tokenIndex = 0
+  let hashIndex = 0
   for (let i = 0; i < hexLength; i++) {
-    if (i % 2) {
-      hexId += hexHash[i >> 1]
+    if ((i + 1) % step === 0) {
+      hexId += hexHash[hashIndex++]
     } else {
-      hexId += hexToken[i >> 1]
+      hexId += hexToken[tokenIndex++]
     }
   }
 
@@ -153,7 +167,7 @@ export async function createId({
  */
 export async function verifyId(
   id: string,
-  { salt = SALT } = {}
+  { salt = SALT, step = 2 } = {}
 ): Promise<boolean> {
   if (!id || id.length > MAX_ID_LENGTH) {
     return false // Invalid ID length
@@ -167,7 +181,7 @@ export async function verifyId(
     let extractedHexHash = ''
 
     for (let i = 0; i < hexId.length; i++) {
-      if (i % 2) {
+      if ((i + 1) % step === 0) {
         extractedHexHash += hexId[i]
       } else {
         extractedHexToken += hexId[i]
