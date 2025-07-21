@@ -123,6 +123,24 @@ The reversed process is used to verify the ID.
 This means that if a malicious user tries to generate an ID with a specific value,
 let’s say `"admin"`, conceptually they need to ensure that `SHA1(salt + "di")` starts with `"amn"` so the mixed ID would be `"admin"`. This is very unlikely to happen, at least not with a reasonable amount of effort.
 
+## Advanced usage
+
+Use the `step` option to change the hash position distribution, which defaults to 2 (`RHRHRH...` where R is random data and H is the hash).
+
+When specifying 3, the distribution will be `RRHRRHRRH...`. It reduces collision rate but increases the chance of manipulation:
+
+```typescript
+import { createId, verifyId } from 'legid'
+
+const id = await createId({
+  step: 3
+})
+
+const isValid = await verifyId(id, {
+  step: 3
+})
+```
+
 ## Note
 
 **While this is not a cryptographic solution**, it is designed to make it difficult
@@ -130,8 +148,6 @@ to manipulate the ID with lowest effort. It is not intended for use in
 cryptographic applications or where high security is required.
 
 Collisions are still possible. The format Legid uses will decrease the possible generation space. For a given length L, there will be approximately 62^(L/2) IDs available. __You should always check collision and ID length on the server side before proceeding.__
-
-Possible adjustments can be made to this lib by changing RHRHRH (R for random data position, H for hash positions) to other representations like HRRHRR to reduce the collision rate with a compromise of security.
 
 ## Author
 
